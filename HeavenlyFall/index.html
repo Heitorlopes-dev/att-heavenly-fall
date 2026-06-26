@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <link rel="shortcut icon" href="#" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Heavenly Fall</title>
+  
+  <script src='JavaScript/Events.js' defer></script>
+  <script src='JavaScript/Animacao.js' defer></script>
+  <script src='JavaScript/Personagem.js' defer></script>
+  <script src='JavaScript/Som.js' defer></script>
+  <script src='JavaScript/Cenário.js' defer></script>
+  <script src='JavaScript/Inimigos.js' defer></script>
+  <script src='JavaScript/User.js' defer></script>
+  <script src='JavaScript/ReqRes.js' defer></script>
+  <link rel="stylesheet" type="text/css" href="css/estilo.css" media="screen" />
+</head>
+
+<body>
+  <h1 class="game-title">Heavenly Fall</h1>
+
+  <div class="game-container">
+      <div class="ui-overlay" id="uiOverlay">
+          
+          <div class="login-box" id="loginBox">
+              <input type="text" id="usernameInput" placeholder="Digite seu Nickname" autocomplete="off" />
+              <button onclick="fazerLogin()" id="Logar">Login</button>
+          </div>
+
+          <div class="mode-buttons" id="modeButtons">
+              <button onclick="iniciarModoHistoria()" class="ModeGame" id="ModoHistoria">Modo Historia</button>
+              <button onclick="iniciarModoRecorde()" class="ModeGame" id="ModoRecorde">Modo Recorde</button>
+              <a href="record.html" style="text-decoration: none;"><button type="button" id="VerRecordes">Ver Recordes</button></a>
+          </div>
+
+          <button onclick="jogarNovamenteBtn()" id="JogarNovamente">Jogar Novamente</button>
+          <button onclick="usarOutroUsuarioBtn()" id="NewUser">Usar outro usuário</button>
+
+      </div>
+      
+      <canvas id="canvas" height="400"> Atualize seu navegador </canvas>
+  </div>
+
+  <div class="controls-panel">
+      <div class="control-item"><span class="key">F</span> Iniciar</div>
+      <div class="control-item"><span class="key">ESPAÇO</span> Pular</div>
+      <div class="control-item"><span class="key">E</span> Atirar</div>
+      <div class="control-item"><span class="key">ENTER</span> Pause</div>
+  </div>
+
+  <!-- Audio elements -->
+  <audio src="som/musicas/test.mp3" id="audio" preload="auto"></audio>
+  <audio src="som/musicas/pulo.mp3" id="Pulo" preload="auto"></audio>
+  <audio src="som/musicas/GameOver.mp3" id="GameOver" preload="auto"></audio>
+  <audio src="som/musicas/MusicaFinal.mp3" id="MusicaFinal" preload="auto"></audio>
+  <audio src="som/musicas/pew.mp3" id="pew" preload="auto"></audio>
+  <audio src="som/musicas/chefSpawn.mp3" id="chefSpawn" preload="auto"></audio>
+  <audio src="som/musicas/chefdano1.mp3" id="chefdano1" preload="auto"></audio>
+  <audio src="som/musicas/chefdano2.mp3" id="chefdano2" preload="auto"></audio>
+  <audio src="som/musicas/chefdano3.mp3" id="chefdano3" preload="auto"></audio>
+  <audio src="som/musicas/chefdano4.mp3" id="chefdano4" preload="auto"></audio>
+  <audio src="som/musicas/chefMorte.mp3" id="chefeMorte" preload="auto"></audio>
+  <audio src="som/musicas/chefTiro.mp3" id="chefeTiro" preload="auto"></audio>
+
+  <script>
+    // Configurando o DOM e classes globais
+    let canvas = document.getElementById('canvas');
+    let context = canvas.getContext('2d');
+    canvas.width = Math.min(window.innerWidth - 40, 1200);
+    
+    // Globais requeridas pelos outros scripts
+    let personagem, animacao, montanha, chao, nuvem, inimigo, som, usuario, chefe, reqRes;
+
+    // Elementos da UI
+    let uiOverlay, loginBox, modeButtons, usernameInput, JogarNovamente, NewUser, ModoHistoria, ModoRecorde, Logar;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        uiOverlay = document.getElementById('uiOverlay');
+        loginBox = document.getElementById('loginBox');
+        modeButtons = document.getElementById('modeButtons');
+        usernameInput = document.getElementById('usernameInput');
+        JogarNovamente = document.getElementById('JogarNovamente');
+        NewUser = document.getElementById('NewUser');
+        ModoHistoria = document.getElementById('ModoHistoria');
+        ModoRecorde = document.getElementById('ModoRecorde');
+        Logar = document.getElementById('Logar');
+
+        personagem = new Personagem(context);
+        animacao = new Animacao(context);
+        montanha = new Montanha(context);
+        chao = new Chao(context);
+        nuvem = new Nuvem(context);
+        inimigo = new Inimigos(context);
+        som = new Som(context);
+        usuario = new User(context);
+        chefe = new Chefão(context);
+        // reqRes is just a global function now, no class initialization needed.
+
+        animacao.Lop();
+        setInterval(() => personagem.AnimaPersonagem(), 250);
+        setInterval(() => inimigo.animaInimigo(), 150);
+        setInterval(() => chefe.animaTiro(), 250);
+    });
+
+    // Funções de UI para fazer ponte com a lógica antiga
+    function fazerLogin() {
+        if(usernameInput.value.trim() !== '') {
+            usuario.name = usernameInput.value.trim();
+            loginBox.style.display = 'none';
+            modeButtons.style.display = 'flex';
+        } else {
+            alert('Por favor, digite um nome válido!');
+        }
+    }
+
+    function iniciarModoHistoria() {
+        usuario.ModoHistoria();
+        iniciarJogo();
+    }
+
+    function iniciarModoRecorde() {
+        usuario.ModoRecorde();
+        iniciarJogo();
+    }
+
+    function iniciarJogo() {
+        usuario.BackupUser();
+        uiOverlay.style.display = 'none';
+        som.TrilhaPrincipal();
+        animacao.Jogar();
+        animacao.Lop();
+    }
+
+    function jogarNovamenteBtn() {
+        uiOverlay.style.display = 'none';
+        animacao.JogarNovamente();
+    }
+
+    function usarOutroUsuarioBtn() {
+        JogarNovamente.style.display = 'none';
+        NewUser.style.display = 'none';
+        modeButtons.style.display = 'none';
+        loginBox.style.display = 'flex';
+        usernameInput.value = '';
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/estilo.css" media="screen" />
+    <title>Recorde</title>
+    <style>
+        .records-container {
+            width: 80%;
+            max-width: 800px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.3);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            text-align: center;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .records-table th, .records-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .records-table th {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .records-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .back-btn {
+            margin-top: 30px;
+            display: inline-block;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="game-title">Hall of Fame</h1>
+    
+    <div class="records-container">
+        <table class="records-table"> 
+            <thead>
+                <tr>
+                  <th>Usuário</th>
+                  <th>Pontos</th>
+                </tr>
+            </thead>
+            <tbody id="user">
+            </tbody>
+        </table>
+
+        <a href="index.html" class="back-btn"><button>Voltar ao Jogo</button></a>
+    </div>
+
+    <script>
+        async function GetRecord() {
+            try {
+                let res = await fetch('/user/record', {
+                    method: 'GET',
+                });
+                let data = await res.json();
+                
+                let lista = document.getElementById('user');
+                
+                if (data.response && data.response.length > 0) {
+                    data.response.sort((a, b) => b.points - a.points);
+
+                    for (let item of data.response) {
+                        let tr = document.createElement('tr');
+                        let td1 = document.createElement('td');
+                        let td2 = document.createElement('td');
+                        td1.textContent = item.user;
+                        td2.textContent = item.points;
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        lista.appendChild(tr);
+                    }
+                } else {
+                    lista.innerHTML = '<tr><td colspan="2">Nenhum recorde encontrado.</td></tr>';
+                }
+            } catch (error) {
+                console.error("Erro:" + error);
+                document.getElementById('user').innerHTML = '<tr><td colspan="2">Erro ao carregar recordes. O backend está rodando?</td></tr>';
+            }
+        }
+        GetRecord();
+    </script>
+</body>
+</html>
