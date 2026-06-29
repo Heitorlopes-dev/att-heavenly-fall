@@ -20,6 +20,7 @@ h1.game-title {
     margin: 0 0 20px 0;
     text-transform: uppercase;
     background: linear-gradient(to right, #38bdf8, #818cf8);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0px 0px 20px rgba(56, 189, 248, 0.3);
