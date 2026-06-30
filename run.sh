@@ -2,6 +2,10 @@
 
 echo "🚀 Iniciando Heavenly Fall..."
 
+# Iniciar o banco de dados (caso o PC tenha sido reiniciado)
+echo "🗄️ Ligando o Banco de Dados (MongoDB)..."
+docker start mongo-db > /dev/null 2>&1 || echo "⚠️ Aviso: não foi possível iniciar o mongo-db automaticamente"
+
 # Iniciar o backend
 cd HeavenlyFall_BackEnd
 echo "📦 Instalando dependências do backend..."
