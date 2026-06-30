@@ -22,7 +22,6 @@ document.addEventListener("keydown", function (evento) {
             document.getElementById('uiOverlay').style.display = 'none';
             som.TrilhaPrincipal()
             animacao.Jogar()
-            animacao.Lop()
         } else {
             alert('Por favor, faça login antes de iniciar o jogo!')
         }

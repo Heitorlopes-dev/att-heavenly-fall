@@ -204,7 +204,6 @@ function Animacao(context) {
         chefe.resetaTiro()
         inimigo.resetaInimigo()
         animacao.Jogar()
-        animacao.Lop()
         som.TrilhaPrincipal()
         JogarNovamente.style.display = 'none'
         NewUser.style.display = 'none'
